@@ -1,0 +1,43 @@
+/* CSS for the BIO BOX of the profiles pages */
+.box {
+  background:#fff;
+  transition:all 0.2s ease;
+  border:2px dashed #dadada;
+  margin-top: 10px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  background-clip: padding-box;
+  padding: 0px 10px 20px 10px;
+}
+
+.box:hover {
+  border:2px solid #525C7A;
+}
+
+.box .box-content {
+  padding: 10px;
+  border-radius: 0 0 2px 2px;
+  background-clip: padding-box;
+  box-sizing: border-box;
+}
+.box .box-content p {
+  color:#515c66;
+}
+/* Adding a pading bottom due to visual desings */
+#page-wrapper {
+  padding-bottom: 2px;
+}
+/* CSS to the annoying footer */
+#page-wrapper {
+  min-height: 100%;
+}
+html {
+  height: 100%;
+}
+body {
+  height: 90%;
+}
+footer {
+  min-height: 40px;
+  line-height: 40px;
+}

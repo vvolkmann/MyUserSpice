@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 ?>
-<?php require_once 'init.php'; ?>
+<?php require_once '../users/init.php'; ?>
 <?php require_once $abs_us_root.$us_url_root.'users/includes/header.php'; ?>
 <?php require_once $abs_us_root.$us_url_root.'users/includes/navigation.php'; ?>
 
@@ -94,17 +94,17 @@ $userData = fetchAllUsers(); //Fetch information for all users
 				 <tbody>
 					<?php
 					//Cycle through users
-					foreach ($userData as $v1) {
+					foreach ($userData as $user) {
 							?>
 					<tr>
-					<td><div class="form-group"><input type="checkbox" name="delete[<?=$v1->id?>]" value="<?=$v1->id?>" /></div></td>
-					<td><a href='admin_user.php?id=<?=$v1->id?>'><?=$v1->username?></a></td>
-					<td><?=$v1->email?></td>
-					<td><?=$v1->fname?></td>
-					<td><?=$v1->lname?></td>
-					<td><?=$v1->join_date?></td>
-					<td><?=$v1->last_login?></td>
-					<td><?=$v1->logins?></td>
+					<td><div class="form-group"><input type="checkbox" name="delete[<?=$user->id?>]" value="<?=$user->id?>" /></div></td>
+					<td><a href='admin_user.php?id=<?=$user->id?>'><?=$user->username?></a></td>
+					<td><?=$user->email?></td>
+					<td><?=$user->fname?></td>
+					<td><?=$user->lname?></td>
+					<td><?=$user->join_date?></td>
+					<td><?=$user->last_login?></td>
+					<td><?=$user->logins?></td>
 					</tr>
 							<?php } ?>
 

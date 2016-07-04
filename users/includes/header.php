@@ -66,6 +66,8 @@ if($settings->track_guest == 1){
 	?>
 	
 	<title><?=$settings->site_name;?></title>
+	<!--[if IE]><link rel="shortcut icon" href="<?=$us_url_root?>/favicon.ico"><![endif]-->
+	<link rel="icon" href="<?=$us_url_root?>favicon.ico">
 
 	<!-- Bootstrap Core CSS -->
 	<!-- AKA Primary CSS -->

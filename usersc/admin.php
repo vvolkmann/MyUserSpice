@@ -174,7 +174,7 @@ if(!empty($_POST['css'])){
 					<div class="panel-heading"><strong>Permission Levels</strong></div>
 					<div class="panel-body text-center"><div class="huge"> <i class='fa fa-lock fa-1x'></i> <?=$level_count?></div></div>
 					<div class="panel-footer">
-						<span class="pull-left"><a href="<?=$us_url_root?>users/admin_permissions.php">Manage</a></span>
+						<span class="pull-left"><a href="admin_permissions.php">Manage</a></span>
 						<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
 						<div class="clearfix"></div>
 					</div> <!-- /panel-footer -->

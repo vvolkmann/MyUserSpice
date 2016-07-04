@@ -41,7 +41,7 @@ $GLOBALS['config'] = array(
 //If you changed your UserSpice or UserCake database prefix
 //put it here.
 $db_table_prefix = "uc_";  //Old database prefix
-$copyright_message = 'UserSpice Copyrights';
+$copyright_message = 'Copyright Rukichirimoshi, 2016';
 $your_private_key = '6LdxKCMTAAAAAHreP2qGx5G-bt77hDQL2dfjKFCC';
 $your_public_key = '6LdxKCMTAAAAAI-xoAlsmid_L1dQ4YKgOSNSmjd-';
 $publickey = $your_public_key;

@@ -90,9 +90,9 @@ $count = 0;
           <div class="class col-sm-6">
             <!-- Content Goes Here. Class width can be adjusted -->
             <?php
+            echo resultBlock($errors,$successes);
             $errors = [];
             $successes = [];
-            echo resultBlock($errors,$successes);
             ?>
             <form name='adminPermissions' action='<?=$_SERVER['PHP_SELF']?>' method='post'>
              <h2>Create a new permission group</h2>

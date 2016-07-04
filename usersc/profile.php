@@ -27,61 +27,58 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 if($user->isLoggedIn()) { $thisUserID = $user->data()->id;} else { $thisUserID = 0; }
 
-if(isset($_GET['id']))
-	{
+if(isset($_GET['id'])) {
 	$userID = Input::get('id');
 	
 	$userQ = $db->query("SELECT * FROM profiles LEFT JOIN users ON user_id = users.id WHERE user_id = ?",array($userID));
 	$thatUser = $userQ->first();
 
-	if($thisUserID == $userID)
-		{
-		$editbio = ' <small><a href="edit_profile.php">Edit Bio</a></small>';
-		}
-	else
-		{
+	if($thisUserID == $userID) {
+		$editbio = '<a href="edit_profile.php" class="btn btn-primary">Edit Bio</a>';
+	} else {
 		$editbio = '';
-		}
+	}
 	
 	$ususername = ucfirst($thatUser->username)."'s Profile";
 	$grav = get_gravatar(strtolower(trim($thatUser->email)));
 	$useravatar = '<img src="'.$grav.'" class="img-thumbnail" alt="'.$ususername.'">';
 	$usbio = html_entity_decode($thatUser->bio);
-	//Uncomment out the line below to see what's available to you.
-	//dump($thisUser);
-	}
-else
-	{
+} else {
 	$ususername = '404';
 	$usbio = 'User not found';
 	$useravatar = '';
-	$editbio = ' <small><a href="/">Go to the homepage</a></small>';
-	}
+	$editbio = '<a href="/" class="btn btn-primary">Go to the homepage</a>';
+}
 ?>
-   <div id="page-wrapper">
-
-		 <div class="container">
-				<!-- Main jumbotron for a primary marketing message or call to action -->
-				<div class="well">
-					<div class="row">
-						<div class="col-xs-12 col-md-2">
-							<p><?php echo $useravatar;?></p>
+<div id="page-wrapper">
+	<div class="container">
+		<!-- Main jumbotron for a primary marketing message or call to action -->
+		<div class="well">
+			<div class="row">
+				<div class="col-xs-12 col-md-2">
+					<p><?php echo $useravatar;?></p>
+				</div>
+				<div class="col-xs-12 col-md-10">
+					<h1><?php echo $ususername;?></h1>
+					<div class="box">
+						<div class="box-content">
+							<h3 style="margin-top: 5px !important;">User Bio</h3>
+							<hr style="margin: 0px !important;"/>
+							<p><?php echo $usbio;?></p>
 						</div>
-						<div class="col-xs-12 col-md-10">
-						<h1><?php echo $ususername;?></h1>
-							<h2><?php echo $usbio.$editbio;?></h2>
-	
 					</div>
+					<br />
+					<div class="col-xs-offset-8 col-md-offset-10 col-xs-4 col-md-2">
+						<?php echo $editbio;?>
 					</div>
 				</div>
-				
-										<a class="btn btn-success" href="view_all_users.php" role="button">All Users</a>
-
-
-    </div> <!-- /container -->
-
+			</div>
+		</div>
+		
+		<a class="btn btn-success" href="view_all_users.php" role="button">All Users</a>
+	</div> <!-- /container -->
 </div> <!-- /#page-wrapper -->
- 
+
 <!-- footers -->
 <?php require_once $abs_us_root.$us_url_root.'users/includes/page_footer.php'; // the final html footer copyright row + the external js calls ?>
 <!-- Place any per-page javascript here -->
