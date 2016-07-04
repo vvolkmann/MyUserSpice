@@ -82,6 +82,15 @@ if(!empty($_POST['settings'])){
 		$fields=array('site_name'=>$site_name);
 		$db->update('settings',1,$fields);
 	}
+	if($settings->ldap_address != $_POST['ldap_address']) {
+		$ldap_address = Input::get('ldap_address');
+		$fields=array('ldap_address'=>$ldap_address);
+		$db->update('settings',1,$fields);
+	}if($settings->ldap_prefix != $_POST['ldap_prefix']) {
+		$ldap_prefix = Input::get('ldap_prefix');
+		$fields=array('ldap_prefix'=>$ldap_prefix);
+		$db->update('settings',1,$fields);
+	}
 	if($settings->login_type != $_POST['login_type']) {
 		$login_type = Input::get('login_type');
 		$fields=array('login_type'=>$login_type);
@@ -267,6 +276,18 @@ if(!empty($_POST['css'])){
 					<div class="form-group">
 						<label for="site_name">Site Name</label>
 						<input type="text" class="form-control" name="site_name" id="site_name" value="<?=$settings->site_name?>">
+					</div>
+
+					<!-- LDAP Address -->
+					<div class="form-group">
+						<label for="ldap_address">LDAP Address</label>
+						<input type="text" class="form-control" name="ldap_address" id="ldap_address" value="<?=$settings->ldap_address?>">
+					</div>
+
+					<!-- LDAP Prefix -->
+					<div class="form-group">
+						<label for="ldap_prefix">LDAP Prefix</label>
+						<input type="text" class="form-control" name="ldap_prefix" id="ldap_prefix" value="<?=$settings->ldap_prefix?>">
 					</div>
 
 					<!-- Recaptcha Option -->
