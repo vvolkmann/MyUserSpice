@@ -61,7 +61,7 @@ $email_act=$results->email_act;
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="" href="<?=$us_url_root?>"><img class="img-responsive" src="<?=$us_url_root?>users/images/logo.png" alt="" /></a>
+			<a class="" href="<?=$us_url_root?>"><img class="img-responsive" src="<?=$us_url_root?>users/images/logoRuki.png" alt="" /></a>
 		</div>
 		<div class="collapse navbar-collapse navbar-top-menu-collapse navbar-right">
 			<ul class="nav navbar-nav ">
