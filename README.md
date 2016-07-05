@@ -17,11 +17,11 @@ http://www.userspice.com/
     ALTER TABLE `settings` ADD `ldap_address` VARCHAR(50) NOT NULL AFTER `custom3`, ADD `ldap_prefix` VARCHAR(20) NOT NULL AFTER `ldap_address`;
 
 ### SQLs For User Groups
-    /* Tables related with the new logic of user groups */<br />
+    /* Tables related with the new logic of user groups */
     CREATE TABLE `user_groups` (`id` INT(11) NOT NULL AUTO_INCREMENT , `name` VARCHAR(150) NOT NULL, PRIMARY KEY (`id`));
     CREATE TABLE `user_groups_user_matches` (`id` INT(11) NOT NULL AUTO_INCREMENT , `group_id` INT(11) NOT NULL , `user_id` INT(11) NOT NULL , PRIMARY KEY (`id`));
     CREATE TABLE `user_groups_permissions_matches` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `group_id` INT(11) NOT NULL , `permission_id` INT(11) NOT NULL , PRIMARY KEY (`id`));
 
 ### Other SQLs
-    /* Not sure why these ids were with lenght 15, adjusted to 11 (FK Table is 11) */<br />
+    /* Not sure why these ids were with lenght 15, adjusted to 11 (FK Table is 11) */
     ALTER TABLE `permission_page_matches` CHANGE `permission_id` `permission_id` INT(11) NOT NULL, CHANGE `page_id` `page_id` INT(11) NOT NULL;
