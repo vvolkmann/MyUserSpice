@@ -602,3 +602,110 @@ function updateEmail($id, $email) {
 
 	return true;
 }
+
+//*******************************************//
+//		UserGroups related methods
+//*******************************************//
+
+//Check if a user group ID exists in the DB
+function usergroupIdExists($id) {
+	$db = DB::getInstance();
+	$query = $db->query("SELECT id FROM user_groups WHERE id = ? LIMIT 1",array($id));
+	$num_returns = $query->count();
+
+	if ($num_returns > 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//Retrieve information for all user groups
+function fetchAllUserGroups() {
+	$db = DB::getInstance();
+	$query = $db->query("SELECT id, name FROM user_groups");
+	$results = $query->results();
+	return ($results);
+}
+
+//Delete a user group from the DB
+function deleteUserGroup($group) {
+	global $errors;
+	$i = 0;
+	$db = DB::getInstance();
+	foreach($group as $id){
+		if ($id == 1){
+		$errors[] = lang("CANNOT_DELETE_NEWUSERS");
+		}
+		elseif ($id == 2){
+			$errors[] = lang("CANNOT_DELETE_ADMIN");
+		}else{
+			$query1 = $db->query("DELETE FROM user_groups WHERE id = ?",array($id));
+			$query2 = $db->query("DELETE FROM user_groups_permissions_matches WHERE group_id = ?",array($id));
+			$query3 = $db->query("DELETE FROM user_groups_user_matches WHERE group_id = ?",array($id));
+			$i++;
+		}
+	}
+	return $i;
+}
+
+//Retrieve information for a single user group
+function fetchUsergroupDetails($id) {
+	$db = DB::getInstance();
+	$query = $db->query("SELECT id, name FROM user_groups WHERE id = ? LIMIT 1",array($id));
+	$results = $query->first();
+	$row = array('id' => $results->id, 'name' => $results->name);
+	return ($row);
+}
+
+//Unmatch user group(s) with user(s)
+function removeUserGroupMember($group_ids, $members) {
+	$db = DB::getInstance();
+	if(is_array($members)){
+		$memberString = '';
+		foreach($members as $member){
+		  $memberString .= $member.',';
+		}
+		$memberString = rtrim($memberString,',');
+
+		$q = $db->query("DELETE FROM user_groups_user_matches WHERE group_id = ? AND user_id IN ({$memberString})",[$group_ids]);
+	}elseif(is_array($group_ids)){
+		$usergroupString = '';
+		foreach($group_ids as $group){
+			$usergroupString .= $group.',';
+		}
+		$usergroupString = rtrim($usergroupString,',');
+		$q = $db->query("DELETE FROM user_groups_user_matches WHERE user_id = ? AND group_id IN ({$usergroupString})",[$members]);
+	}
+
+	//Remove this group permissions from the users that were removed
+	/*
+			$usergroupPermissions = fetchUserGroupPermissions($group);
+			removePermission($usergroupPermissions, $members);
+	*/
+	return $q->count();
+}
+
+//Retrieve list of users who are in the user group
+function fetchUserGroupUsers($usergroup_id) {
+	$db = DB::getInstance();
+	$query = $db->query("SELECT id, user_id FROM user_groups_user_matches WHERE group_id = ?",array($usergroup_id));
+	$results = $query->results();
+	return ($results);
+	$row[$user] = array('id' => $id, 'user_id' => $user);
+	if (isset($row)){
+		return ($row);
+	}
+}
+
+//Retrieve list of permissions of user group
+function fetchUserGroupPermissions($usergroup_id) {
+	$db = DB::getInstance();
+	$query = $db->query("SELECT id, permission_id FROM user_groups_permissions_matches WHERE group_id = ?", array($usergroup_id));
+	$results = $query->results();
+	return ($results);
+	$row[$permission] = array('id' => $id, 'permission_id' => $permission);
+	if (isset($row)){
+		return ($row);
+	}
+}

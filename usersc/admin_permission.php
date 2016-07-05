@@ -24,7 +24,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <?php if (!securePage($_SERVER['PHP_SELF'])){die();} ?>
 <?php
 $validation = new Validate();
-//PHP Goes Here!
+
+$errors = [];
+$successes = [];
+
 $permissionId = $_GET['id'];
 
 //Check if selected permission level exists
@@ -137,134 +140,136 @@ $pageData = fetchAllPages();
 		<div class="row">
 			<div class="col-xs-12">
 				<div id="form-errors">
-					<?=$validation->display_errors();?></div>
-					<!-- Main Center Column -->
-					<!-- Content Goes Here. Class width can be adjusted -->
-					<h1>Configure Details for this Permission Level</h1>
-					<?php
-					$errors = [];
-					$successes = [];
-					echo resultBlock($errors,$successes);
-					?>
-					<form name='adminPermission' action='<?=$_SERVER['PHP_SELF']?>?id=<?=$permissionId?>' method='post'>
-						<table class='table'>
-							<tr>
-								<td>
-									<h3>Permission Information</h3>
-									<div id='regbox'>
-										<p>
-											<label>ID:</label>
-											<?=$permissionDetails['id']?>
-										</p>
-										<p>
-											<label>Name:</label>
-											<input type='text' name='name' value='<?=$permissionDetails['name']?>' />
-										</p>
-										<h3>Delete this Level?</h3>
-										<label>Delete:</label>
-										<input type='checkbox' name='delete[<?=$permissionDetails['id']?>]' id='delete[<?=$permissionDetails['id']?>]' value='<?=$permissionDetails['id']?>'>
-									</div>
-								</td>
-								<td>
-									<h3>Permission Membership</h3>
-									<div id='regbox'>
-										<p>
-											<strong>Remove Members:</strong>
-											<?php
-											//Display list of permission levels with access
-											$perm_users = [];
-											foreach($permissionUsers as $perm){
-												$perm_users[] = $perm->user_id;
-											}
-											foreach ($userData as $v1){
-												if(in_array($v1->id,$perm_users)){ ?>
-													<br><input type='checkbox' name='removePermission[]' id='removePermission[]' value='<?=$v1->id;?>'> <?=$v1->username;
-												}
-											}
-											?>
-
-										</p>
-										<p>
-											<strong>Add Members:</strong>
-											<?php
-											//List users without permission level
-											$perm_losers = [];
-											foreach($permissionUsers as $perm){
-												$perm_losers[] = $perm->user_id;
-											}
-											foreach ($userData as $v1){
-												if(!in_array($v1->id,$perm_losers)){ ?>
-													<br><input type='checkbox' name='addPermission[]' id='addPermission[]' value='<?=$v1->id?>'> <?=$v1->username;
-												}
-											}
-											?>
-
-										</p>
-									</div>
-								</td>
-								<td>
-									<h3>Permission Access</h3>
-									<div id='regbox'>
-										<p>
-											<strong>Public Pages:</strong>
-											<?php
-											//List public pages
-											foreach ($pageData as $v1) {
-												if($v1->private != 1){
-													echo "<br>".$v1->page;
-												}
-											}
-											?>
-										</p>
-										<p>
-											<strong>Remove Access From This Level:</strong>
-											<?php
-											//Display list of pages with this access level
-											$page_ids = [];
-											foreach($pagePermissions as $pp){
-												$page_ids[] = $pp->page_id;
-											}
-											foreach ($pageData as $v1){
-												if(in_array($v1->id,$page_ids)){ ?>
-													<br><input type='checkbox' name='removePage[]' id='removePage[]' value='<?=$v1->id;?>'> <?=$v1->page;?>
-													<?php 
-												}
-											}
-											?>
-										</p>
-										<p>
-											<strong>Add Access To This Level:</strong>
-											<?php
-											//Display list of pages with this access level
-
-											foreach ($pageData as $v1){
-												if(!in_array($v1->id,$page_ids) && $v1->private == 1){ ?>
-													<br><input type='checkbox' name='addPage[]' id='addPage[]' value='<?=$v1->id;?>'> <?=$v1->page;?>
-													<?php 
-												}
-											}
-											?>
-										</p>
-									</div>
-								</td>
-							</tr>
-						</table>
-						<input type="hidden" name="csrf" value="<?=Token::generate();?>" >
-						<p>
-							<label>&nbsp;</label>
-							<input class='btn btn-primary' type='submit' value='Update Permission' class='submit' />
-						</p>
-					</form>
-					<!-- End of main content section -->
+					<?=$validation->display_errors();?>
 				</div>
+				<!-- Main Center Column -->
+				<!-- Content Goes Here. Class width can be adjusted -->
+				<h1>Configure Details for this Permission Level</h1>
+				<?php
+				echo resultBlock($errors,$successes);
+				$errors = [];
+				$successes = [];
+				?>
+				
+				<form name='adminPermission' action='<?=$_SERVER['PHP_SELF']?>?id=<?=$permissionId?>' method='post'>
+					<table class='table'>
+						<tr>
+							<td>
+								<h3>Permission Information</h3>
+								<div id='regbox'>
+									<p>
+										<label>ID:</label>
+										<?=$permissionDetails['id']?>
+									</p>
+									<p>
+										<label>Name:</label>
+										<input type='text' name='name' value='<?=$permissionDetails['name']?>' />
+									</p>
+									<h3>Delete this Level?</h3>
+									<label>Delete:</label>
+									<input type='checkbox' name='delete[<?=$permissionDetails['id']?>]' id='delete[<?=$permissionDetails['id']?>]' value='<?=$permissionDetails['id']?>'>
+								</div>
+							</td>
+							<td>
+								<h3>Permission Membership</h3>
+								<div id='regbox'>
+									<p>
+										<strong>Remove Members:</strong>
+										<?php
+											//Display list of permission levels with access
+										$perm_users = [];
+										foreach($permissionUsers as $perm){
+											$perm_users[] = $perm->user_id;
+										}
+										foreach ($userData as $v1){
+											if(in_array($v1->id,$perm_users)){ ?>
+												<br><input type='checkbox' name='removePermission[]' id='removePermission[]' value='<?=$v1->id;?>'> <?=$v1->username;
+											}
+										}
+										?>
+
+									</p>
+									<p>
+										<strong>Add Members:</strong>
+										<?php
+											//List users without permission level
+										$perm_losers = [];
+										foreach($permissionUsers as $perm){
+											$perm_losers[] = $perm->user_id;
+										}
+										foreach ($userData as $v1){
+											if(!in_array($v1->id,$perm_losers)){ ?>
+												<br><input type='checkbox' name='addPermission[]' id='addPermission[]' value='<?=$v1->id?>'> <?=$v1->username;
+											}
+										}
+										?>
+
+									</p>
+								</div>
+							</td>
+							<td>
+								<h3>Permission Access</h3>
+								<div id='regbox'>
+									<p>
+										<strong>Public Pages:</strong>
+										<?php
+											//List public pages
+										foreach ($pageData as $v1) {
+											if($v1->private != 1){
+												echo "<br>".$v1->page;
+											}
+										}
+										?>
+									</p>
+									<p>
+										<strong>Remove Access From This Level:</strong>
+										<?php
+											//Display list of pages with this access level
+										$page_ids = [];
+										foreach($pagePermissions as $pp){
+											$page_ids[] = $pp->page_id;
+										}
+										foreach ($pageData as $v1){
+											if(in_array($v1->id,$page_ids)){ ?>
+												<br><input type='checkbox' name='removePage[]' id='removePage[]' value='<?=$v1->id;?>'> <?=$v1->page;?>
+												<?php 
+											}
+										}
+										?>
+									</p>
+									<p>
+										<strong>Add Access To This Level:</strong>
+										<?php
+											//Display list of pages with this access level
+
+										foreach ($pageData as $v1){
+											if(!in_array($v1->id,$page_ids) && $v1->private == 1){ ?>
+												<br><input type='checkbox' name='addPage[]' id='addPage[]' value='<?=$v1->id;?>'> <?=$v1->page;?>
+												<?php 
+											}
+										}
+										?>
+									</p>
+								</div>
+							</td>
+						</tr>
+					</table>
+					<input type="hidden" name="csrf" value="<?=Token::generate();?>" >
+					<p>
+						<label>&nbsp;</label>
+						<input class='btn btn-primary' type='submit' value='Update Permission' class='submit' />
+					</p>
+				</form>
+				<!-- End of main content section -->
 			</div>
 		</div>
 	</div>
+</div>
 
-	<!-- /.row -->
-	<!-- footers -->
-	<?php require_once $abs_us_root.$us_url_root.'users/includes/page_footer.php'; // the final html footer copyright row + the external js calls ?>
+<!-- /.row -->
+<!-- footers -->
+<?php require_once $abs_us_root.$us_url_root.'users/includes/page_footer.php'; // the final html footer copyright row + the external js calls ?>
 
-	<!-- Place any per-page javascript here -->
+<!-- Place any per-page javascript here -->
 
-	<?php require_once $abs_us_root.$us_url_root.'users/includes/html_footer.php'; // currently just the closing /body and /html ?>
+<?php require_once $abs_us_root.$us_url_root.'users/includes/html_footer.php'; // currently just the closing /body and /html ?>

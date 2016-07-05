@@ -62,8 +62,7 @@ if(!empty($_POST))
       ));
     if($validation->passed()){
       $db->insert('permissions',$fields);
-      echo "Permission Updated";
-
+      echo "Permission Created";
     }else{
 
     }
