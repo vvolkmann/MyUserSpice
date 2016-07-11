@@ -1,11 +1,5 @@
 <?php
 
-if(file_exists("install/index.php")){
-	//perform redirect if installer files exist
-	//this if{} block may be deleted once installed
-	header("Location: install/index.php");
-}
-
 require_once 'users/init.php';
 require_once $abs_us_root.$us_url_root.'users/includes/header.php';
 require_once $abs_us_root.$us_url_root.'users/includes/navigation.php';
@@ -20,7 +14,7 @@ require_once $abs_us_root.$us_url_root.'users/includes/navigation.php';
 			<p class="text-muted">An Open Source PHP User Management Framework. <?php //print_r($_SESSION);?></p>
 			<p>
 			<?php if($user->isLoggedIn()){$uid = $user->data()->id;?>
-				<a class="btn btn-default" href="users/account.php" role="button">User Account &raquo;</a>
+				<a class="btn btn-default" href="usersc/account.php" role="button">User Account &raquo;</a>
 			<?php }else{?>
 				<a class="btn btn-warning" href="users/login.php" role="button">Log In &raquo;</a>
 				<a class="btn btn-info" href="users/join.php" role="button">Sign Up &raquo;</a>
