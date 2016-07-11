@@ -29,6 +29,8 @@ class DB {
 				Config::get('mysql/username'), 
 				Config::get('mysql/password'),
 				array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET SESSION sql_mode = ''"));
+			//Setting charset for pt_br DBs
+			$this->_pdo->exec("set names utf8");
 		} catch(PDOException $e){
 			die($e->getMessage());
 		}
