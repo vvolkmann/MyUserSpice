@@ -134,15 +134,15 @@ function fetchPermissionUsers($permission_id) {
 //Unmatch permission level(s) from user(s)
 function removePermission($permissions, $members) {
 	$db = DB::getInstance();
-	if(is_array($members)){
+	if(is_array($members)) {
 		$memberString = '';
-		foreach($members as $member){
+		foreach($members as $member) {
 			$memberString .= $member.',';
 		}
 		$memberString = rtrim($memberString,',');
 
 		$q = $db->query("DELETE FROM user_permission_matches WHERE permission_id = ? AND user_id IN ({$memberString})",[$permissions]);
-	}elseif(is_array($permissions)){
+	} elseif (is_array($permissions)) {
 		$permissionString = '';
 		foreach($permissions as $permission){
 			$permissionString .= $permission.',';
@@ -326,6 +326,7 @@ function deleteUsers($users) {
 		$query1 = $db->query("DELETE FROM users WHERE id = ?",array($id));
 		$query2 = $db->query("DELETE FROM user_permission_matches WHERE user_id = ?",array($id));
 		$query3 = $db->query("DELETE FROM profiles WHERE user_id = ?",array($id));
+		$query4 = $db->query("DELETE FROM user_groups_user_matches WHERE user_id = ?",array($id));
 		$i++;
 	}
 	return $i;
@@ -630,121 +631,138 @@ function fetchAllUserGroups() {
 }
 
 //Delete a user group from the DB
-function deleteUserGroup($group) {
+function deleteUserGroup($group_ids) {
 	global $errors;
 	$i = 0;
 	$db = DB::getInstance();
-	foreach($group as $id){
-		if ($id == 1){
-			$errors[] = lang("CANNOT_DELETE_NEWUSERS");
+	foreach($group_ids as $group_id) {
+		//Remove the permissions from the users before delete the group
+		$usergroupUsers = fetchUserGroupUsers($group_id);
+		$usergroupPermissions = fetchUserGroupPermissions($group_id);
+
+		$permissionString = '';
+		foreach($usergroupPermissions as $perm) {
+			$permissionString .= $perm->permission_id.',';
 		}
-		elseif ($id == 2){
-			$errors[] = lang("CANNOT_DELETE_ADMIN");
-		}else{
-			$query1 = $db->query("DELETE FROM user_groups WHERE id = ?",array($id));
-			$query2 = $db->query("DELETE FROM user_groups_permissions_matches WHERE group_id = ?",array($id));
-			$query3 = $db->query("DELETE FROM user_groups_user_matches WHERE group_id = ?",array($id));
-			$i++;
+		$permissionString = rtrim($permissionString,',');
+		foreach ($usergroupUsers as $user) {
+			$query0 = $db->query("DELETE FROM user_permissions_matches WHERE user_id = ? AND permission_id IN ({$permissionString})",[$user->user_id]);
+			var_dump($query0);
 		}
+
+		$query1 = $db->query("DELETE FROM user_groups WHERE id = ?", array($group_id));
+		$query2 = $db->query("DELETE FROM user_groups_permissions_matches WHERE group_id = ?", array($group_id));
+		$query3 = $db->query("DELETE FROM user_groups_user_matches WHERE group_id = ?", array($group_id));
+
+		$i++;
 	}
 	return $i;
 }
 
-//Retrieve information for a single user group
-function fetchUsergroupDetails($id) {
+//Retrieve information of a user group
+function fetchUsergroupDetails($group_id) {
 	$db = DB::getInstance();
-	$query = $db->query("SELECT id, name FROM user_groups WHERE id = ? LIMIT 1",array($id));
+	$query = $db->query("SELECT id, name FROM user_groups WHERE id = ? LIMIT 1",array($group_id));
 	$results = $query->first();
 	$row = array('id' => $results->id, 'name' => $results->name);
 	return ($row);
 }
 
-//Match user group(s) with user(s)
-function addUserGroupMember($group_ids, $members) {
+//Retrieve list of users who are in the user group
+function fetchUserGroupUsers($group_id) {
+	$db = DB::getInstance();
+	$query = $db->query("SELECT user_id FROM user_groups_user_matches WHERE group_id = ?",array($group_id));
+	$results = $query->results();
+	return ($results);
+	$row[$user] = array('id' => $id, 'user_id' => $user);
+	if (isset($row)) {
+		return ($row);
+	}
+}
+
+//Retrieve list of permissions of user group
+function fetchUserGroupPermissions($group_id) {
+	$db = DB::getInstance();
+	$query = $db->query("SELECT permission_id FROM user_groups_permissions_matches WHERE group_id = ?", array($group_id));
+	$results = $query->results();
+	return ($results);
+	$row[$permission] = array('id' => $id, 'permission_id' => $permission);
+	if (isset($row)) {
+		return ($row);
+	}
+}
+
+function addUserGroupMember($group_id, $members_ids) {
 	$db = DB::getInstance();
 	$i = 0;
-	if (is_array($group_ids)) {
-		foreach ($group_ids as $group_id) {
-			if($db->query("INSERT INTO user_groups_user_matches (group_id, user_id) VALUES (?,?)",[$group_id, $members])){
-				$i++;
-			}
-		}
-	} else if (is_array($members)) {
-		foreach ($members as $member) {
-			if($db->query("INSERT INTO user_groups_user_matches (group_id, user_id) VALUES (?,?)",[$group_ids, $member])){
-				$i++;
-			}
+	foreach ($members_ids as $member) {
+		if($db->query("INSERT INTO user_groups_user_matches (group_id, user_id) VALUES (?,?)",[$group_id, $member])){
+			$i++;
 		}
 	}
 
 	//add this group permissions to the users that were added
-	$groupPermissions = fetchUserGroupPermissions($group_ids);
-	foreach ($members as $member) {
-		$userPermissions = fetchUserPermissions($member);
-		$userperm_ids = [];
-		foreach($userPermissions as $perm){
-			$userperm_ids[] = $perm->permission_id;
-		}
-		//var_dump($userperm_ids);
-		//var_dump($groupPermissions);
-		foreach ($groupPermissions as $v1){
-			if(in_array($v1->id,$userperm_ids)){
-				addPermission($v1->id, $member);
-			}
-		}
+	$usergroupPermissions = fetchUserGroupPermissions($group_id);
+	foreach ($usergroupPermissions as $perm) {
+		addPermission($perm->permission_id, $members_ids);
 	}
 
 	return $i;
 }
 
-//Unmatch user group(s) with user(s)
-function removeUserGroupMember($group_ids, $members) {
+function addGroupPermission($group_id, $permission_ids) {
 	$db = DB::getInstance();
-	if(is_array($members)){
-		$memberString = '';
-		foreach($members as $member){
-			$memberString .= $member.',';
+	$i = 0;
+	foreach ($permission_ids as $perm_id) {
+		if($db->query("INSERT INTO user_groups_permissions_matches (group_id, permission_id) VALUES (?,?)",[$group_id, $perm_id])){
+			$i++;
 		}
-		$memberString = rtrim($memberString,',');
-
-		$q = $db->query("DELETE FROM user_groups_user_matches WHERE group_id = ? AND user_id IN ({$memberString})",[$group_ids]);
-	}elseif(is_array($group_ids)){
-		$usergroupString = '';
-		foreach($group_ids as $group){
-			$usergroupString .= $group.',';
-		}
-		$usergroupString = rtrim($usergroupString,',');
-		$q = $db->query("DELETE FROM user_groups_user_matches WHERE user_id = ? AND group_id IN ({$usergroupString})",[$members]);
 	}
 
+	//Add the permission that were added to the group to the usergroup members
+	$usergroupUsers = fetchUserGroupUsers($group_id);
+	foreach ($usergroupUsers as $user) {
+		addPermission($permission_ids, $user->user_id);
+	}
+
+	return $i;
+}
+
+function removeUserGroupMember($group_id, $members_ids) {
+	$db = DB::getInstance();
+	$memberString = '';
+	foreach($members_ids as $member){
+		$memberString .= $member.',';
+	}
+	$memberString = rtrim($memberString,',');
+
+	$q = $db->query("DELETE FROM user_groups_user_matches WHERE group_id = ? AND user_id IN ({$memberString})",[$group_id]);
+	$i = $q->count();
+
 	//Remove this group permissions from the users that were removed
-	/*
-			$usergroupPermissions = fetchUserGroupPermissions($group);
-			removePermission($usergroupPermissions, $members);
-	*/
-			return $q->count();
-		}
+	$usergroupPermissions = fetchUserGroupPermissions($group_id);
+	foreach ($usergroupPermissions as $perm) {
+		removePermission($perm->permission_id, $members_ids);
+	}
 
-//Retrieve list of users who are in the user group
-		function fetchUserGroupUsers($usergroup_id) {
-			$db = DB::getInstance();
-			$query = $db->query("SELECT id, user_id FROM user_groups_user_matches WHERE group_id = ?",array($usergroup_id));
-			$results = $query->results();
-			return ($results);
-			$row[$user] = array('id' => $id, 'user_id' => $user);
-			if (isset($row)){
-				return ($row);
-			}
-		}
+	return $i;
+}
 
-//Retrieve list of permissions of user group
-		function fetchUserGroupPermissions($usergroup_id) {
-			$db = DB::getInstance();
-			$query = $db->query("SELECT id, permission_id FROM user_groups_permissions_matches WHERE group_id = ?", array($usergroup_id));
-			$results = $query->results();
-			return ($results);
-			$row[$permission] = array('id' => $id, 'permission_id' => $permission);
-			if (isset($row)){
-				return ($row);
-			}
-		}
+function removeGroupPermission($group_id, $permission_ids) {
+	$db = DB::getInstance();
+	$permissionString = '';
+	foreach($permission_ids as $perm) {
+		$permissionString .= $perm.',';
+	}
+	$permissionString = rtrim($permissionString,',');
+	$q = $db->query("DELETE FROM user_groups_permissions_matches WHERE group_id = ? AND permission_id IN ({$permissionString})",[$group_id]);
+	$i = $q->count();
+
+	//Remove the permission that were removed from the group from the usergroup members
+	$usergroupUsers = fetchUserGroupUsers($group_id);
+	foreach ($usergroupUsers as $user) {
+		removePermission($permission_ids, $user->user_id);
+	}
+
+	return $i;
+}

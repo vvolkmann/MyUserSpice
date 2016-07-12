@@ -100,8 +100,26 @@ if(!empty($_POST)){
 		}
 	}
 
-	//TODO
-	//ADD/Remove permissions from group
+	//Remove permissions from group
+	if(!empty($_POST['removePermission'])){
+		$remove = $_POST['removePermission'];
+		if ($deletion_count = removeGroupPermission($usergroupId, $remove)) {
+			$successes[] = "Permission removed from the user group";
+		} else {
+			$errors[] = lang("SQL_ERROR");
+		}
+	}
+
+	//Add permissions from group
+	if(!empty($_POST['addPermission'])){
+		$add = $_POST['addPermission'];
+		if ($addition_count = addGroupPermission($usergroupId, $add)) {
+			$successes[] = "Permission added to the user group";
+		} else {
+			$errors[] = lang("SQL_ERROR");
+		}
+	}
+
 }
 
 //Fetch information specific to user group
