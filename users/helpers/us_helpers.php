@@ -32,7 +32,7 @@ function get_gravatar($email, $s = 120, $d = 'mm', $r = 'pg', $img = false, $att
 	if ( $img ) {
 		$url = '<img src="' . $url . '"';
 		foreach ( $atts as $key => $val )
-		$url .= ' ' . $key . '="' . $val . '"';
+			$url .= ' ' . $key . '="' . $val . '"';
 		$url .= ' />';
 	}
 	return $url;
@@ -134,15 +134,15 @@ function fetchPermissionUsers($permission_id) {
 //Unmatch permission level(s) from user(s)
 function removePermission($permissions, $members) {
 	$db = DB::getInstance();
-	if(is_array($members)){
+	if(is_array($members)) {
 		$memberString = '';
-		foreach($members as $member){
-		  $memberString .= $member.',';
+		foreach($members as $member) {
+			$memberString .= $member.',';
 		}
 		$memberString = rtrim($memberString,',');
 
 		$q = $db->query("DELETE FROM user_permission_matches WHERE permission_id = ? AND user_id IN ({$memberString})",[$permissions]);
-	}elseif(is_array($permissions)){
+	} elseif (is_array($permissions)) {
 		$permissionString = '';
 		foreach($permissions as $permission){
 			$permissionString .= $permission.',';
@@ -256,18 +256,18 @@ function addPage($page, $permission) {
 	if (is_array($permission)){
 		foreach($permission as $id){
 			$query = $db->query("INSERT INTO permission_page_matches (
-			permission_id, page_id ) VALUES ( $id , $page )");
+				permission_id, page_id ) VALUES ( $id , $page )");
 			$i++;
 		}
 	} elseif (is_array($page)){
 		foreach($page as $id){
 			$query = $db->query("INSERT INTO permission_page_matches (
-			permission_id, page_id ) VALUES ( $permission , $id )");
+				permission_id, page_id ) VALUES ( $permission , $id )");
 			$i++;
 		}
 	} else {
 		$query = $db->query("INSERT INTO permission_page_matches (
-		permission_id, page_id ) VALUES ( $permission , $page )");
+			permission_id, page_id ) VALUES ( $permission , $page )");
 		$i++;
 	}
 	return $i;
@@ -286,10 +286,10 @@ function fetchPermissionPages($permission_id) {
 	$db = DB::getInstance();
 
 	$query = $db->query(
-	"SELECT m.id as id, m.page_id as page_id, p.page as page, p.private as private
-	FROM permission_page_matches AS m
-	INNER JOIN pages AS p ON m.page_id = p.id
-	WHERE m.permission_id = ?",[$permission_id]);
+		"SELECT m.id as id, m.page_id as page_id, p.page as page, p.private as private
+		FROM permission_page_matches AS m
+		INNER JOIN pages AS p ON m.page_id = p.id
+		WHERE m.permission_id = ?",[$permission_id]);
 	$results = $query->results();
 	return ($results);
 }
@@ -326,6 +326,7 @@ function deleteUsers($users) {
 		$query1 = $db->query("DELETE FROM users WHERE id = ?",array($id));
 		$query2 = $db->query("DELETE FROM user_permission_matches WHERE user_id = ?",array($id));
 		$query3 = $db->query("DELETE FROM profiles WHERE user_id = ?",array($id));
+		$query4 = $db->query("DELETE FROM user_groups_user_matches WHERE user_id = ?",array($id));
 		$i++;
 	}
 	return $i;
@@ -389,12 +390,12 @@ function securePage($uri){
 	//If page does not exist in DB, allow access
 	if (empty($pageDetails)){
 		return true;
-	}elseif ($pageDetails['private'] == 0){//If page is public, allow access
+	} elseif ($pageDetails['private'] == 0){//If page is public, allow access
 		return true;
-	}elseif(!$user->isLoggedIn()){ //If user is not logged in, deny access
+	} elseif(!$user->isLoggedIn()){ //If user is not logged in, deny access
 		Redirect::to($us_url_root.'users/login.php');
 		return false;
-	}else {
+	} else {
 		//Retrieve list of permission levels with access to page
 
 		$query = $db->query("SELECT permission_id FROM permission_page_matches WHERE page_id = ?",[$pageID]);
@@ -473,12 +474,13 @@ function fetchAllPermissions() {
 }
 
 //Displays error and success messages
-function resultBlock($errors,$successes){
+function resultBlock($errors,$successes) {
 	//Error block
-	if(count($errors) > 0){
-		echo "<div class='alert alert-danger alert-dismissible' role='alert'> <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
-		<ul>";
-		foreach($errors as $error){
+	if(count($errors) > 0) {
+		echo "<div class='alert alert-danger alert-dismissible' role='alert'>";
+		echo "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>";
+		echo "<ul>";
+		foreach($errors as $error) {
 			echo "<li>".$error."</li>";
 		}
 		echo "</ul>";
@@ -486,10 +488,11 @@ function resultBlock($errors,$successes){
 	}
 
 	//Success block
-	if(count($successes) > 0){
-		echo "<div class='alert alert-success alert-dismissible' role='alert'> <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
-		<ul>";
-		foreach($successes as $success){
+	if(count($successes) > 0) {
+		echo "<div class='alert alert-success alert-dismissible' role='alert'>";
+		echo "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>";
+		echo "<ul>";
+		foreach($successes as $success) {
 			echo "<li>".$success."</li>";
 		}
 		echo "</ul>";
@@ -503,9 +506,9 @@ function lang($key,$markers = NULL){
 	if($markers == NULL){
 		$str = $lang[$key];
 	}else{
-	//Replace any dyamic markers
-	$str = $lang[$key];
-	$iteration = 1;
+		//Replace any dyamic markers
+		$str = $lang[$key];
+		$iteration = 1;
 		foreach($markers as $marker){
 			$str = str_replace("%m".$iteration."%",$marker,$str);
 			$iteration++;
@@ -523,8 +526,7 @@ function lang($key,$markers = NULL){
 //Check if a permission level name exists in the DB
 function permissionNameExists($permission) {
 	$db = DB::getInstance();
-	$query = $db->query("SELECT id FROM permissions WHERE
-	name = ?",array($permission));
+	$query = $db->query("SELECT id FROM permissions WHERE name = ?",array($permission));
 	$results = $query->results();
 }
 
@@ -556,7 +558,7 @@ function deletePermission($permission) {
 	$db = DB::getInstance();
 	foreach($permission as $id){
 		if ($id == 1){
-		$errors[] = lang("CANNOT_DELETE_NEWUSERS");
+			$errors[] = lang("CANNOT_DELETE_NEWUSERS");
 		}
 		elseif ($id == 2){
 			$errors[] = lang("CANNOT_DELETE_ADMIN");
@@ -568,8 +570,6 @@ function deletePermission($permission) {
 		}
 	}
 	return $i;
-
-	//Redirect::to('admin_permissions.php');
 }
 
 //Checks if an email is valid
@@ -601,4 +601,173 @@ function updateEmail($id, $email) {
 	$db->update('users',$id,$fields);
 
 	return true;
+}
+
+//*******************************************//
+//		UserGroups related methods
+//*******************************************//
+
+//Check if a user group ID exists in the DB
+function usergroupIdExists($id) {
+	$db = DB::getInstance();
+	$query = $db->query("SELECT id FROM user_groups WHERE id = ? LIMIT 1",array($id));
+	$num_returns = $query->count();
+
+	if ($num_returns > 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//Retrieve information for all user groups
+function fetchAllUserGroups() {
+	$db = DB::getInstance();
+	$query = $db->query("SELECT id, name FROM user_groups");
+	$results = $query->results();
+	return ($results);
+}
+
+//Delete a user group from the DB
+function deleteUserGroup($group_ids) {
+	global $errors;
+	$i = 0;
+	$db = DB::getInstance();
+	foreach($group_ids as $group_id) {
+		//Remove the permissions from the users before delete the group
+		$usergroupUsers = fetchUserGroupUsers($group_id);
+		$usergroupPermissions = fetchUserGroupPermissions($group_id);
+
+		$permissionString = '';
+		foreach($usergroupPermissions as $perm) {
+			$permissionString .= $perm->permission_id.',';
+		}
+		$permissionString = rtrim($permissionString,',');
+		foreach ($usergroupUsers as $user) {
+			$query0 = $db->query("DELETE FROM user_permission_matches WHERE user_id = ? AND permission_id IN ({$permissionString})",[$user->user_id]);
+		}
+
+		$query1 = $db->query("DELETE FROM user_groups WHERE id = ?", array($group_id));
+		$query2 = $db->query("DELETE FROM user_groups_permissions_matches WHERE group_id = ?", array($group_id));
+		$query3 = $db->query("DELETE FROM user_groups_user_matches WHERE group_id = ?", array($group_id));
+
+		$i++;
+	}
+	return $i;
+}
+
+//Retrieve information of a usergroup
+function fetchUsergroupDetails($group_id) {
+	$db = DB::getInstance();
+	$query = $db->query("SELECT id, name FROM user_groups WHERE id = ? LIMIT 1",array($group_id));
+	$results = $query->first();
+	$row = array('id' => $results->id, 'name' => $results->name);
+	return ($row);
+}
+
+//Retrieve list of users who are in the usergroup
+function fetchUserGroupUsers($group_id) {
+	$db = DB::getInstance();
+	$query = $db->query("SELECT user_id FROM user_groups_user_matches WHERE group_id = ?",array($group_id));
+	$results = $query->results();
+	return ($results);
+	$row[$user] = array('id' => $id, 'user_id' => $user);
+	if (isset($row)) {
+		return ($row);
+	}
+}
+
+//Retrieve list of permissions of usergroup
+function fetchUserGroupPermissions($group_id) {
+	$db = DB::getInstance();
+	$query = $db->query("SELECT permission_id FROM user_groups_permissions_matches WHERE group_id = ?", array($group_id));
+	$results = $query->results();
+	return ($results);
+	$row[$permission] = array('id' => $id, 'permission_id' => $permission);
+	if (isset($row)) {
+		return ($row);
+	}
+}
+
+//Match usergroup members
+function addUserGroupMember($group_id, $members_ids) {
+	$db = DB::getInstance();
+	$i = 0;
+	foreach ($members_ids as $member) {
+		if($db->query("INSERT INTO user_groups_user_matches (group_id, user_id) VALUES (?,?)",[$group_id, $member])){
+			$i++;
+		}
+	}
+
+	//add this group permissions to the users that were added
+	$usergroupPermissions = fetchUserGroupPermissions($group_id);
+	foreach ($usergroupPermissions as $perm) {
+		addPermission($perm->permission_id, $members_ids);
+	}
+
+	return $i;
+}
+
+//Match usergroup permissions
+function addGroupPermission($group_id, $permissions_ids) {
+	$db = DB::getInstance();
+	$i = 0;
+	foreach ($permissions_ids as $perm_id) {
+		if($db->query("INSERT INTO user_groups_permissions_matches (group_id, permission_id) VALUES (?,?)",[$group_id, $perm_id])){
+			$i++;
+		}
+	}
+
+	//Add the permission that were added to the group to the usergroup members
+	$usergroupUsers = fetchUserGroupUsers($group_id);
+	foreach ($usergroupUsers as $user) {
+		$userPermissions = fetchUserPermissions($user->user_id);
+		$userPermissions_ids = array();
+		foreach ($userPermissions as $perm) {
+			array_push($userPermissions_ids, $perm->permission_id);
+		}
+		$missing_permissions_ids = array_diff($permissions_ids, $userPermissions_ids);
+		addPermission($missing_permissions_ids, $user->user_id);
+	}
+
+	return $i;
+}
+
+function removeUserGroupMember($group_id, $members_ids) {
+	$db = DB::getInstance();
+	$memberString = '';
+	foreach($members_ids as $member){
+		$memberString .= $member.',';
+	}
+	$memberString = rtrim($memberString,',');
+
+	$q = $db->query("DELETE FROM user_groups_user_matches WHERE group_id = ? AND user_id IN ({$memberString})",[$group_id]);
+	$i = $q->count();
+
+	//Remove this group permissions from the users that were removed
+	$usergroupPermissions = fetchUserGroupPermissions($group_id);
+	foreach ($usergroupPermissions as $perm) {
+		removePermission($perm->permission_id, $members_ids);
+	}
+
+	return $i;
+}
+
+function removeGroupPermission($group_id, $permissions_ids) {
+	$db = DB::getInstance();
+	$permissionString = '';
+	foreach($permissions_ids as $perm) {
+		$permissionString .= $perm.',';
+	}
+	$permissionString = rtrim($permissionString,',');
+	$q = $db->query("DELETE FROM user_groups_permissions_matches WHERE group_id = ? AND permission_id IN ({$permissionString})",[$group_id]);
+	$i = $q->count();
+
+	//Remove the permission that were removed from the group from the usergroup members
+	$usergroupUsers = fetchUserGroupUsers($group_id);
+	foreach ($usergroupUsers as $user) {
+		removePermission($permissions_ids, $user->user_id);
+	}
+
+	return $i;
 }

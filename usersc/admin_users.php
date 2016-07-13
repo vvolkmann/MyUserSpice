@@ -123,12 +123,11 @@ $userData = fetchAllUsers(); //Fetch information for all users
   </div>
 </div>
 
-
-	<!-- End of main content section -->
+<!-- End of main content section -->
 
 <?php require_once $abs_us_root.$us_url_root.'users/includes/page_footer.php'; // the final html footer copyright row + the external js calls ?>
 
-    <!-- Place any per-page javascript here -->
-<script src="js/search.js" charset="utf-8"></script>
+<!-- Place any per-page javascript here -->
+<script src="<?=$us_url_root?>users/js/search.js" charset="utf-8"></script>
 
 <?php require_once $abs_us_root.$us_url_root.'users/includes/html_footer.php'; // currently just the closing /body and /html ?>

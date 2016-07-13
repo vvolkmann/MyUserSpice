@@ -198,7 +198,7 @@ if(Input::exists()){
 			} catch (Exception $e) {
 				die($e->getMessage());
 			}
-			Redirect::to($us_url_root.'users/admin.php');
+			Redirect::to($us_url_root.'usersc/admin.php');
 		}
 	
 	} //Validation and agreement checbox

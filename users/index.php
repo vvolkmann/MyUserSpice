@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <?php
 require_once 'init.php';
 if(isset($user) && $user->isLoggedIn()){
-  Redirect::to($us_url_root.'users/account.php');
+  Redirect::to($us_url_root.'usersc/account.php');
 }else{
   Redirect::to($us_url_root.'users/login.php');
 }

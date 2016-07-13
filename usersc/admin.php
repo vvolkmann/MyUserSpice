@@ -60,6 +60,9 @@ $user_count = $usersQ->count();
 $pagesQ = $db->query("SELECT * FROM pages");
 $page_count = $pagesQ->count();
 
+$groupsQ = $db->query("SELECT * FROM user_groups");
+$group_count = $groupsQ->count();
+
 $levelsQ = $db->query("SELECT * FROM permissions");
 $level_count = $levelsQ->count();
 
@@ -168,6 +171,19 @@ if(!empty($_POST['css'])){
 				</div><!-- /panel -->
 			</div><!-- /col -->
 
+			<!-- User Groups Panel -->
+			<div class="col-xs-6 col-md-3">
+				<div class="panel panel-default">
+					<div class="panel-heading"><strong>User Groups</strong></div>
+					<div class="panel-body text-center"><div class="huge"> <i class='fa fa-users fa-1x'></i> <?=$group_count?></div></div>
+					<div class="panel-footer">
+						<span class="pull-left"><a href="admin_usergroups.php">Manage</a></span>
+						<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						<div class="clearfix"></div>
+					</div> <!-- /panel-footer -->
+				</div><!-- /panel -->
+			</div> <!-- /.col -->
+
 			<!-- Permissions Panel -->
 			<div class="col-xs-6 col-md-3">
 				<div class="panel panel-default">
@@ -181,19 +197,6 @@ if(!empty($_POST['css'])){
 				</div><!-- /panel -->
 			</div> <!-- /.col -->
 
-			<!-- Pages Panel -->
-			<div class="col-xs-6 col-md-3">
-				<div class="panel panel-default">
-					<div class="panel-heading"><strong>Pages</strong></div>
-					<div class="panel-body  text-center"><div class="huge"> <i class='fa fa-file-text fa-1x'></i> <?=$page_count?></div></div>
-					<div class="panel-footer">
-						<span class="pull-left"><a href="<?=$us_url_root?>users/admin_pages.php">Manage</a></span>
-						<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-						<div class="clearfix"></div>
-					</div> <!-- /panel-footer -->
-				</div><!-- /panel -->
-			</div><!-- /col -->
-
 			<!-- Email Settings Panel -->
 			<div class="col-xs-6 col-md-3">
 				<div class="panel panel-default">
@@ -206,6 +209,19 @@ if(!empty($_POST['css'])){
 					</div> <!-- /panel-footer -->
 				</div> <!-- /panel -->
 			</div> <!-- /col -->
+
+			<!-- Pages Panel -->
+			<div class="col-xs-6 col-md-6 col-md-offset-3">
+				<div class="panel panel-default">
+					<div class="panel-heading"><strong>Pages</strong></div>
+					<div class="panel-body  text-center"><div class="huge"> <i class='fa fa-file-text fa-1x'></i> <?=$page_count?></div></div>
+					<div class="panel-footer">
+						<span class="pull-left"><a href="<?=$us_url_root?>users/admin_pages.php">Manage</a></span>
+						<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						<div class="clearfix"></div>
+					</div> <!-- /panel-footer -->
+				</div><!-- /panel -->
+			</div><!-- /col -->
 		</div> <!-- /.row -->
 
 		<div class="row "> <!-- rows for Info Panels -->
