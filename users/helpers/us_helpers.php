@@ -645,12 +645,11 @@ function deleteUserGroup($group_ids) {
 		$permissionString = rtrim($permissionString,',');
 		foreach ($usergroupUsers as $user) {
 			$query0 = $db->query("DELETE FROM user_permission_matches WHERE user_id = ? AND permission_id IN ({$permissionString})",[$user->user_id]);
-			var_dump($query0);
 		}
 
-		//$query1 = $db->query("DELETE FROM user_groups WHERE id = ?", array($group_id));
-		//$query2 = $db->query("DELETE FROM user_groups_permissions_matches WHERE group_id = ?", array($group_id));
-		//$query3 = $db->query("DELETE FROM user_groups_user_matches WHERE group_id = ?", array($group_id));
+		$query1 = $db->query("DELETE FROM user_groups WHERE id = ?", array($group_id));
+		$query2 = $db->query("DELETE FROM user_groups_permissions_matches WHERE group_id = ?", array($group_id));
+		$query3 = $db->query("DELETE FROM user_groups_user_matches WHERE group_id = ?", array($group_id));
 
 		$i++;
 	}
