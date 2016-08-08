@@ -26,7 +26,7 @@ $GLOBALS['config'] = array(
 	'mysql'      => array('host'         => 'localhost',
 'username'     => 'root',
 'password'     => 'HyperDB',
-'db'           => 'us_ruki',
+'db'           => 'us_languages',
 ),
 'remember'        => array(
   'cookie_name'   => 'pmqesoxiw318374csb',
