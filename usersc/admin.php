@@ -40,6 +40,12 @@ $today = date("Y-m-d H:i:s", strtotime("-1 day", strtotime($date)));
 $week = date("Y-m-d H:i:s", strtotime("-1 week", strtotime($date)));
 $month = date("Y-m-d H:i:s", strtotime("-1 month", strtotime($date)));
 
+$last24=time()-86400;
+
+$recentUsersQ = $db->query("SELECT * FROM users_online WHERE timestamp > ? ORDER BY timestamp DESC",array($last24));
+$recentUsersCount = $recentUsersQ->count();
+$recentUsers = $recentUsersQ->results();
+
 $usersHourQ = $db->query("SELECT * FROM users WHERE last_login > ?",array($hour));
 $usersHour = $usersHourQ->results();
 $hourCount = $usersHourQ->count();
@@ -160,7 +166,6 @@ if(!empty($_POST['css'])){
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<strong>Users</strong>
-						<span class="pull-right"><a href="admin_join.php" type="button" title="Create new user"><i class="fa fa-user-plus"></i></a></span>
 					</div>
 					<div class="panel-body text-center"><div class="huge"> <i class='fa fa-user fa-1x'></i> <?=$user_count?></div></div>
 					<div class="panel-footer">
@@ -224,6 +229,14 @@ if(!empty($_POST['css'])){
 			</div><!-- /col -->
 		</div> <!-- /.row -->
 
+		<!-- CHECK IF ADDITIONAL ADMIN PAGES ARE PRESENT AND INCLUDE IF AVAILABLE -->
+		<?php
+		if(file_exists($abs_us_root.$us_url_root.'usersc/includes/admin_panels.php')){
+			require_once $abs_us_root.$us_url_root.'usersc/includes/admin_panels.php';
+		}
+		?>
+		<!-- /CHECK IF ADDITIONAL ADMIN PAGES ARE PRESENT AND INCLUDE IF AVAILABLE -->
+
 		<div class="row "> <!-- rows for Info Panels -->
 			<h2 style="padding-left: 15px;">Info Panels</h2>
 			<div class="col-xs-12 col-md-6">
@@ -239,25 +252,18 @@ if(!empty($_POST['css'])){
 					</div>
 				</div><!--/panel-->
 
-				<?php  if($settings->track_guest == 1){ ?>
-					<div class="panel panel-default">
-						<div class="panel-heading"><strong>All Visitors</strong> <span class="small">(Whether logged in or not)</span></div>
-						<div class="panel-body">
+				<div class="panel panel-default">
+					<div class="panel-heading"><strong>All Visitors</strong> <span class="small">(Whether logged in or not)</span></div>
+					<div class="panel-body">
+						<?php  if($settings->track_guest == 1){ ?>
 							<?="In the last 30 minutes, the unique visitor count was ".count_users()."<br>";?>
-						</div>
-					</div><!--/panel-->
-					<?php 
-				}?>
-
-				<?php  if($settings->track_guest != 1){ ?>
-					<div class="panel panel-default">
-						<div class="panel-heading"><strong>Guest Tracking Is Off</strong> <span class="small"></span></div>
-						<div class="panel-body">
-							Turn "Track Guests" on below for advanced tracking statistics.
-						</div>
-					</div><!--/panel-->
-					<?php 
-				}?>
+							<?php 
+						}else{ ?>
+							Guest tracking off. Turn "Track Guests" on below for advanced tracking statistics.
+							<?php 
+						} ?>
+					</div>
+				</div><!--/panel-->
 			</div> <!-- /col -->
 
 			<div class="col-xs-12 col-md-6">
@@ -266,13 +272,38 @@ if(!empty($_POST['css'])){
 					<div class="panel-body">
 						<div class="uvistable table-responsive">
 							<table class="table">
-								<thead><tr><th>Username</th><th>[IP]</th></tr></thead>
-								<tbody>
-									<?php foreach($usersDay as $v1){ ?>
-										<tr><td><a href="admin_user.php?id=<?=$v1->id?>"><?=ucfirst($v1->username)?></a></td><td>[0.0.0.0]</td></tr>
+								<?php 
+								if($settings->track_guest == 1){ ?>
+									<thead><tr><th>Username</th><th>IP</th><th>Last Activity</th></tr></thead>
+									<tbody>
+
 										<?php 
-									}?>
-								</tbody>
+										foreach($recentUsers as $user){
+											$user_id=$user->user_id;
+											$username=name_from_id($user->user_id);
+											$timestamp=date("Y-m-d H:i:s",$user->timestamp);
+											$ip=$user->ip;
+
+											if ($user_id==0){
+												$username="guest";
+											}
+
+											if ($user_id==0){?>
+												<tr><td><?=$username?></td><td><?=$ip?></td><td><?=$timestamp?></td></tr>
+												<?php 
+											}else{ ?>
+												<tr><td><a href="admin_user.php?id=<?=$user_id?>"><?=$username?></a></td><td><?=$ip?></td><td><?=$timestamp?></td></tr>
+												<?php 
+											} ?>
+
+											<?php 
+										} ?>
+
+									</tbody>
+									<?php 
+								}else{
+									echo 'Guest tracking off. Turn "Track Guests" on below for advanced tracking statistics.';
+								} ?>
 							</table>
 						</div>
 					</div>

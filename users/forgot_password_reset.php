@@ -36,33 +36,35 @@ if(Input::exists()){
 	}
 }
 
-if(Input::get('reset') == 1){ //$_GET['reset'] is set when clicking the link in the password reset email.
-	
+if(Input::get('reset') == 1){ 
+	//$_GET['reset'] is set when clicking the link in the password reset email.
+
 	//display the reset form.
 	$email = Input::get('email');
 	$vericode = Input::get('vericode');
 	$ruser = new User($email);
 	if (Input::get('resetPassword')) {
-		
+
 		$validate = new Validate();
 		$validation = $validate->check($_POST,array(
-		'password' => array(
-		  'display' => 'New Password',
-		  'required' => true,
-		  'min' => 6,
-		),
-		'confirm' => array(
-		  'display' => 'Confirm Password',
-		  'required' => true,
-		  'matches' => 'password',
-		),
-		));
+			'password' => array(
+				'display' => 'New Password',
+				'required' => true,
+				'min' => 6,
+				),
+			'confirm' => array(
+				'display' => 'Confirm Password',
+				'required' => true,
+				'matches' => 'password',
+				),
+			));
 		if($validation->passed()){
 			//update password
 			$ruser->update(array(
-			  'password' => password_hash(Input::get('password'), PASSWORD_BCRYPT, array('cost' => 12)),
-			  'vericode' => rand(100000,999999),
-			),$ruser->data()->id);
+				'password' => password_hash(Input::get('password'), PASSWORD_BCRYPT, array('cost' => 12)),
+				'vericode' => rand(100000,999999),
+				'email_verified' => true,
+				),$ruser->data()->id);
 			$reset_password_success=TRUE;
 		}else{
 			$reset_password_success=FALSE;
@@ -78,23 +80,23 @@ if(Input::get('reset') == 1){ //$_GET['reset'] is set when clicking the link in 
 ?>
 
 <div id="page-wrapper">
-<div class="container">
+	<div class="container">
 
-<?php
-if ((Input::get('reset') == 1)){
-	if($reset_password_success){
-		require 'views/_forgot_password_reset_success.php';
-	}elseif((!Input::get('resetPassword') || !$reset_password_success) && $password_change_form){
-		require 'views/_forgot_password_reset.php';
-	}else{
-		require 'views/_forgot_password_reset_error.php';
-	}
-}else{
-	require 'views/_forgot_password_reset_error.php';
-}
-?>
+		<?php
+		if ((Input::get('reset') == 1)){
+			if($reset_password_success){
+				require 'views/_forgot_password_reset_success.php';
+			}elseif((!Input::get('resetPassword') || !$reset_password_success) && $password_change_form){
+				require 'views/_forgot_password_reset.php';
+			}else{
+				require 'views/_forgot_password_reset_error.php';
+			}
+		}else{
+			require 'views/_forgot_password_reset_error.php';
+		}
+		?>
 
-</div><!-- /.container-fluid -->
+	</div><!-- /.container-fluid -->
 </div><!-- /#page-wrapper -->
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <!-- footer -->

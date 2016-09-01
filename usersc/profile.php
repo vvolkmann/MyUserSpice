@@ -75,7 +75,12 @@ if(isset($_GET['id'])) {
 			</div>
 		</div>
 		
-		<a class="btn btn-success" href="view_all_users.php" role="button">All Users</a>
+		<?php
+		if (checkMenu(2,$user->data()->id)) { ?>
+			<a class="btn btn-success" href="view_all_users.php" role="button">All Users</a>
+			<?php 
+		}
+		?>
 	</div> <!-- /container -->
 </div> <!-- /#page-wrapper -->
 
