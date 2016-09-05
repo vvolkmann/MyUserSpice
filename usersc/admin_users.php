@@ -140,19 +140,14 @@ if (!empty($_POST)){
 
 $userData = fetchAllUsers(); //Fetch information for all users
 
-
 ?>
 <div id="page-wrapper">
-
 	<div class="container">
-
 		<!-- Page Heading -->
 		<div class="row">
-
 			<div class="col-xs-12 col-md-6">
 				<h1>Manage Users</h1>
 			</div>
-
 			<div class="col-xs-12 col-md-6">
 				<form class="">
 					<label for="system-search">Search:</label>
@@ -164,53 +159,13 @@ $userData = fetchAllUsers(); //Fetch information for all users
 					</div>
 				</form>
 			</div>
-
-		</div>
-
-
-		<div class="row">
-			<div class="col-xs-12">
-				<?php echo $val_err; ?>
-
-				<form class="form-signup" action="admin_users.php" method="POST" id="payment-form">
-					<h3 class="form-signin-heading"> Manually Add a New
-						<select name="perm">
-							<?php
-							foreach ($permOps as $permOp){
-								echo "<option value='$permOp->id'>$permOp->name</option>";
-							}
-							?>
-						</select>
-					</h3>
-
-					<div class="form-group">
-						<div class="col-xs-2">
-							<input  class="form-control" type="text" name="username" id="username" placeholder="Username" value="<?php if (!$form_valid && !empty($_POST)){ echo $username;} ?>" required autofocus>
-						</div>
-						<div class="col-xs-2">
-							<input type="text" class="form-control" id="fname" name="fname" placeholder="First Name" value="<?php if (!$form_valid && !empty($_POST)){ echo $fname;} ?>" required>
-						</div>
-						<div class="col-xs-2">
-							<input type="text" class="form-control" id="lname" name="lname" placeholder="Last Name" value="<?php if (!$form_valid && !empty($_POST)){ echo $lname;} ?>" required>
-						</div>
-						<div class="col-xs-2">
-							<input  class="form-control" type="text" name="email" id="email" placeholder="Email Address" value="<?php if (!$form_valid && !empty($_POST)){ echo $email;} ?>" required >
-						</div>
-						<div class="col-xs-2">
-							<input  class="form-control" type="password" name="password" id="password" placeholder="Password" required aria-describedby="passwordhelp">
-						</div>
-						<div class="col-xs-2">
-							<input  type="password" id="confirm" name="confirm" class="form-control" placeholder="Confirm Password" required >
-						</div>
-					</div>
-					<input type="hidden" value="<?=Token::generate();?>" name="csrf"><br /><br />
-					<input class='btn btn-primary' type='submit' name='addUser' value='Manually Add User' />
-				</form>
-			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-12">
-				<?php echo resultBlock($errors,$successes);?>
+				<?php 
+				echo $val_err;
+				echo resultBlock($errors,$successes);
+				?>
 				<hr />
 				<div class="alluinfo">&nbsp;</div>
 				<form name="adminUsers" action="<?php echo $_SERVER['PHP_SELF'];?>" method="post">
@@ -245,16 +200,62 @@ $userData = fetchAllUsers(); //Fetch information for all users
 						<input type="hidden" name="csrf" value="<?=Token::generate();?>" >
 						<input class='btn btn-danger' type='submit' name='Submit' value='Delete' /><br><br>
 					</form>
-
 				</div>
 			</div>
-
-
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="panel panel-default">
+						<div class="panel-heading" role="tab" id="newUser">
+							<h4 class="panel-title">
+								<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class="colapse">
+								Click to create a New User
+								</a>
+							</h4>
+						</div>
+						<div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="newUser">
+							<div class="panel-body">
+								<form class="form-signup" action="admin_users.php" method="POST" id="payment-form">
+									<h3 class="form-signin-heading"> Manually Add a New
+										<select name="perm">
+											<?php
+											foreach ($permOps as $permOp){
+												echo "<option value='$permOp->id'>$permOp->name</option>";
+											}
+											?>
+										</select>
+									</h3>
+									<div class="form-group">
+										<div class="col-xs-2">
+											<input  class="form-control" type="text" name="username" id="username" placeholder="Username" value="<?php if (!$form_valid && !empty($_POST)){ echo $username;} ?>" required autofocus>
+										</div>
+										<div class="col-xs-2">
+											<input type="text" class="form-control" id="fname" name="fname" placeholder="First Name" value="<?php if (!$form_valid && !empty($_POST)){ echo $fname;} ?>" required>
+										</div>
+										<div class="col-xs-2">
+											<input type="text" class="form-control" id="lname" name="lname" placeholder="Last Name" value="<?php if (!$form_valid && !empty($_POST)){ echo $lname;} ?>" required>
+										</div>
+										<div class="col-xs-2">
+											<input  class="form-control" type="text" name="email" id="email" placeholder="Email Address" value="<?php if (!$form_valid && !empty($_POST)){ echo $email;} ?>" required >
+										</div>
+										<div class="col-xs-2">
+											<input  class="form-control" type="password" name="password" id="password" placeholder="Password" required aria-describedby="passwordhelp">
+										</div>
+										<div class="col-xs-2">
+											<input  type="password" id="confirm" name="confirm" class="form-control" placeholder="Confirm Password" required >
+										</div>
+									</div>
+									<input type="hidden" value="<?=Token::generate();?>" name="csrf"><br /><br />
+									<input class='btn btn-primary' type='submit' name='addUser' value='Manually Add User' />
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 
 	<!-- End of main content section -->
-
 	<?php require_once $abs_us_root.$us_url_root.'users/includes/page_footer.php'; // the final html footer copyright row + the external js calls ?>
 
 	<!-- Place any per-page javascript here -->
