@@ -15,7 +15,7 @@ require_once $abs_us_root.$us_url_root.'users/classes/Input.php';
 require_once $abs_us_root.$us_url_root.'users/classes/Redirect.php';
 require_once $abs_us_root.$us_url_root.'users/classes/Session.php';
 require_once $abs_us_root.$us_url_root.'users/classes/Token.php';
-require_once $abs_us_root.$us_url_root.'users/classes/User.php';
+require_once $abs_us_root.$us_url_root.'usersc/classes/User.php';
 require_once $abs_us_root.$us_url_root.'users/classes/Validate.php';
 require_once $abs_us_root.$us_url_root.'users/classes/phpmailer/PHPMailerAutoload.php';
 
