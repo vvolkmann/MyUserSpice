@@ -129,6 +129,7 @@ if (!empty($_POST)){
 				$db->insert('user_permission_matches',$addNewPermission);
 				$db->insert('profiles',['user_id'=>$theNewId, 'bio'=>'This is the bio']);
 
+				$successes[] = "User created.";
 			} catch (Exception $e) {
 				die($e->getMessage());
 			}
