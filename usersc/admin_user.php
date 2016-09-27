@@ -41,7 +41,7 @@ if(!empty($_POST)) {
   $token = $_POST['csrf'];
   if(!Token::check($token)){
     die('Token doesn\'t match!');
-  }else {
+  } else {
 
     //Update display name
     if ($userdetails->username != $_POST['username']){
@@ -60,7 +60,7 @@ if(!empty($_POST)) {
       if($validation->passed()){
         $db->update('users',$userId,$fields);
         $successes[] = "Username Updated";
-      }else{
+      } else {
 
       }
     }
@@ -70,18 +70,20 @@ if(!empty($_POST)) {
      $fname = Input::get("fname");
 
      $fields=array('fname'=>$fname);
-     $validation->check($_POST,array(
-      'fname' => array(
-        'display' => 'First Name',
-        'required' => true,
-        'min' => 1,
-        'max' => 25
+     $validation->check(
+      $_POST,array(
+        'fname' => array(
+          'display' => 'First Name',
+          'required' => true,
+          'min' => 1,
+          'max' => 25
+          )
         )
-      ));
+      );
      if($validation->passed()){
       $db->update('users',$userId,$fields);
       $successes[] = "First Name Updated";
-    }else{
+    } else {
       ?><div id="form-errors">
       <?=$validation->display_errors();?></div>
       <?php
@@ -110,6 +112,24 @@ if(!empty($_POST)) {
       <?php
     }
   }
+
+  //Update phones
+  for ($i=1; $i < 5; $i++) { 
+    $phoneName = "phone" . $i;
+    if ($userdetails->$phoneName != $_POST[$phoneName]){
+      $newPhone = Input::get($phoneName);
+      $fields=array($phoneName=>$newPhone);
+      $db->update('users',$userId,$fields);
+    }
+  }
+
+  //Update enchente
+  if ($userdetails->enchente != $_POST['enchente']){
+    $enchente = Input::get("enchente");
+    $fields=array('enchente'=>$enchente);
+    $db->update('users',$userId,$fields);
+  }
+
 
   //Block User
   if ($userdetails->permissions != $_POST['active']){
@@ -183,12 +203,9 @@ $useravatar = '<img src="'.$grav.'" class="img-responsive img-thumbnail" alt="">
 //
 ?>
 <div id="page-wrapper">
-
   <div class="container">
-
     <?=resultBlock($errors,$successes);?>
     <?=$validation->display_errors();?>
-
 
     <div class="row">
      <div class="col-xs-12 col-sm-2"><!--left col-->
@@ -214,88 +231,119 @@ $useravatar = '<img src="'.$grav.'" class="img-responsive img-thumbnail" alt="">
 
                <label>Email:</label>
                <input class='form-control' type='text' name='email' value='<?=$userdetails->email?>' />
+               <br />
+               <div class="col-md-6" style="padding-left: 0px">
+                 <label>First Name:</label>
+                 <input  class='form-control' type='text' name='fname' value='<?=$userdetails->fname?>' />
+               </div>
+               <div class="col-md-6" style="padding-right: 0px">
+                 <label>Last Name:</label>
+                 <input  class='form-control' type='text' name='lname' value='<?=$userdetails->lname?>' />
+               </div>
+               <br /><br />
+               <br /><br />
 
-               <label>First Name:</label>
-               <input  class='form-control' type='text' name='fname' value='<?=$userdetails->fname?>' />
-
-               <label>Last Name:</label>
-               <input  class='form-control' type='text' name='lname' value='<?=$userdetails->lname?>' />
-
+               <div class="col-md-6" style="padding-left: 0px">
+                 <div class="panel panel-default">
+                  <div class="panel-heading">Telefones Empresariais:</div>
+                  <div class="panel-body">
+                   <label>Phone1 (Ramal):</label>
+                   <input  class='form-control' type='text' name='phone1' value='<?=$userdetails->phone1?>' />
+                   <label>Phone2 (Celular):</label>
+                   <input  class='form-control' type='text' name='phone2' value='<?=$userdetails->phone2?>' />
+                 </div>
+               </div>
+             </div>
+             <div class="col-md-6" style="padding-right: 0px">
+               <div class="panel panel-default">
+                <div class="panel-heading">Telefones Pessoais:</div>
+                <div class="panel-body">
+                 <label>Phone3 (Celular):</label>
+                 <input  class='form-control' type='text' name='phone3' value='<?=$userdetails->phone3?>' />
+                 <label>Phone4 (Casa):</label>
+                 <input  class='form-control' type='text' name='phone4' value='<?=$userdetails->phone4?>' />
+               </div>
              </div>
            </div>
-         </div><!-- row end -->
-         <div class="row">
-           <h3>Permissions</h3>
-           <div class="col-md-6" style="padding-left: 0px">
-             <div class="panel panel-default">
-              <div class="panel-heading">Remove These Permission(s):</div>
-              <div class="panel-body">
-                <?php
-		          //NEW List of permission levels user is apart of
-                $perm_ids = [];
-                foreach($userPermission as $perm){
-                 $perm_ids[] = $perm->permission_id;
-               }
-               foreach ($permissionData as $v1){
-                if(in_array($v1->id,$perm_ids)){ ?>
-                  <input type='checkbox' name='removePermission[]' id='removePermission[]' value='<?=$v1->id;?>' /> <?=$v1->name;?>
-                  <?php
-                }
-              }
-              ?>
-            </div>
-          </div>
+           <label>Afetado por Enchente?</label>
+           <select name="enchente" class="form-control">
+            <option <?php if ($userdetails->enchente==1){echo "selected='selected'";} ?> value="1">Yes</option>
+            <option <?php if ($userdetails->enchente==0){echo "selected='selected'";} ?> value="0">No</option>
+          </select>
         </div>
-        <div class="col-md-6" style="padding-right: 0px">
-          <div class="panel panel-default">
-            <div class="panel-heading">Add These Permission(s):</div>
-            <div class="panel-body">
-              <?php
-              foreach ($permissionData as $v1){
-                if(!in_array($v1->id,$perm_ids)){ ?>
-                  <input type='checkbox' name='addPermission[]' id='addPermission[]' value='<?=$v1->id;?>' /> <?=$v1->name;?>
-                  <?php
-                }
-              }
-              ?>
-            </div>
-          </div>
-        </div>
-      </div><!-- row end -->
-      <div class="row">
-        <div class="panel panel-default">
-          <div class="panel-heading">Miscellaneous:</div>
-          <div class="panel-body">
-            <div class="col-md-6">
-              <label> Block?:</label>
-              <select name="active" class="form-control">
-               <option <?php if ($userdetails->permissions==1){echo "selected='selected'";} ?> value="1">No</option>
-               <option <?php if ($userdetails->permissions==0){echo "selected='selected'";} ?> value="0">Yes</option>
-             </select>
-           </div>
-           <div class="col-md-6">
-             <label> Ldap?:</label>
-             <select name="ldap" class="form-control">
-               <option <?php if ($userdetails->ldap==0){echo "selected='selected'";} ?> value="0">No</option>
-               <option <?php if ($userdetails->ldap==1){echo "selected='selected'";} ?> value="1">Yes</option>
-             </select>
-           </div>
-         </div>
-       </div>
-     </div><!-- row end -->
+      </div>
+    </div><!-- row end -->
+    <div class="row">
+     <h3>Permissions</h3>
+     <div class="col-md-6" style="padding-left: 0px">
+       <div class="panel panel-default">
+        <div class="panel-heading">Remove These Permission(s):</div>
+        <div class="panel-body">
+         <?php
+	         //NEW List of permission levels user is apart of
+         $perm_ids = [];
+         foreach($userPermission as $perm){
+          $perm_ids[] = $perm->permission_id;
+        }
+        foreach ($permissionData as $v1){
+          if(in_array($v1->id,$perm_ids)){ ?>
+            <input type='checkbox' name='removePermission[]' id='removePermission[]' value='<?=$v1->id;?>' /> <?=$v1->name;?>
+            <?php
+          }
+        } ?>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6" style="padding-right: 0px">
+    <div class="panel panel-default">
+      <div class="panel-heading">Add These Permission(s):</div>
+      <div class="panel-body">
+        <?php
+        foreach ($permissionData as $v1){
+          if(!in_array($v1->id,$perm_ids)){ ?>
+            <input type='checkbox' name='addPermission[]' id='addPermission[]' value='<?=$v1->id;?>' /> <?=$v1->name;?>
+            <?php
+          }
+        }
+        ?>
+      </div>
+    </div>
+  </div>
+</div><!-- row end -->
+<div class="row">
+  <div class="panel panel-default">
+    <div class="panel-heading">Miscellaneous:</div>
+    <div class="panel-body">
+      <div class="col-md-6">
+        <label> Block?:</label>
+        <select name="active" class="form-control">
+         <option <?php if ($userdetails->permissions==1){echo "selected='selected'";} ?> value="1">No</option>
+         <option <?php if ($userdetails->permissions==0){echo "selected='selected'";} ?> value="0">Yes</option>
+       </select>
+     </div>
+     <div class="col-md-6">
+       <label> Ldap?:</label>
+       <select name="ldap" class="form-control">
+         <option <?php if ($userdetails->ldap==0){echo "selected='selected'";} ?> value="0">No</option>
+         <option <?php if ($userdetails->ldap==1){echo "selected='selected'";} ?> value="1">Yes</option>
+       </select>
+     </div>
+   </div>
+ </div>
+</div><!-- row end -->
 
-     <div class="row">
-       <input type="hidden" name="csrf" value="<?=Token::generate();?>" />
-       <div class="col-md-6">
-         <input class='btn btn-primary' type='submit' value='Update' class='submit' />
-       </div>
-       <div class="col-md-6">
-         <a class='btn btn-warning' href="admin_users.php">Cancel</a><br><br>
-       </div>
-     </div><!-- row end -->
-   </form>
+<div class="row">
+ <input type="hidden" name="csrf" value="<?=Token::generate();?>" />
+ <div class="col-md-6">
+   <input class='btn btn-primary' type='submit' value='Update' class='submit' />
+ </div>
+ <div class="col-md-6">
+   <a class='btn btn-warning' href="admin_users.php">Cancel</a><br><br>
+ </div>
+</div><!-- row end -->
+</form>
 
- </div><!--/col-9-->
+</div><!--/col-9-->
 </div><!--/row-->
 
 </div>

@@ -61,7 +61,7 @@ $email_act=$results->email_act;
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="" href="<?=$us_url_root?>"><img class="img-responsive" src="<?=$us_url_root?>users/images/logoRuki.png" alt="" /></a>
+			<a class="" href="<?=$us_url_root?>"><img class="img-responsive" src="<?=$us_url_root?>users/images/logo.png" alt="" style="height: 50px"/></a>
 		</div>
 		<div class="collapse navbar-collapse navbar-top-menu-collapse navbar-right">
 			<ul class="nav navbar-nav ">
@@ -89,7 +89,6 @@ $email_act=$results->email_act;
 
 				<?php }else{ // no one is logged in so display default items ?>
 					<li><a href="<?=$us_url_root?>users/login.php" class=""><i class="fa fa-sign-in"></i> <?=lang("SIGNIN_TEXT","");?></a></li>
-					<li><a href="<?=$us_url_root?>users/join.php" class=""><i class="fa fa-plus-square"></i> <?=lang("SIGNUP_TEXT","");?></a></li>
 					<li class="dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown"><i class="fa fa-life-ring"></i><?=lang("NAVTOP_HELPTEXT","");?> <b class="caret"></b></a>
 					<ul class="dropdown-menu">
 					<li><a href="<?=$us_url_root?>users/forgot_password.php"><i class="fa fa-wrench"></i> Forgot Password</a></li>
